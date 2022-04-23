@@ -1,7 +1,7 @@
 import { createAPI, readJSONBody } from '@iannisz/node-api-kit'
 import { getChallenges } from './challenges'
 import { getLeaderboard, LANGS } from './leaderboard'
-import { Submission, submit } from './submit'
+import { Submission, submissionStatus, submit } from './submit'
 
 const PORT = +process.argv[2] || 3000
 const api = createAPI(PORT)
@@ -30,8 +30,33 @@ api.post('/submit', async (req, res) =>
 
 	try
 	{
-		const result = await submit(body as Submission)
-		res.end(JSON.stringify(result))
+		submit(body as Submission, res)
+	}
+	catch (err)
+	{
+		res.statusCode = 400
+		res.end(err.message)
+	}
+})
+
+api.get('/submission-status', async (req, res) =>
+{
+	res.setHeader('Access-Control-Allow-Origin', '*')
+
+	const url = new URL(req.url, 'http://localhost')
+	const id = url.searchParams.get('id')
+
+	if (id == null)
+	{
+		res.statusCode = 400
+		res.end('Some of the required search parameters (id) are missing')
+		return
+	}
+
+	try
+	{
+		const status = submissionStatus(+id)
+		res.end(JSON.stringify(status))
 	}
 	catch (err)
 	{

@@ -1,3 +1,4 @@
+import { ServerResponse } from 'http'
 import { readFileSync, readdirSync } from 'fs'
 import { challenges } from './challenges'
 import * as CompileBox from './compile-box-api'
@@ -27,7 +28,17 @@ interface SubmitResult
 	results: TestCaseResult[]
 }
 
-export const submit = async (submission: Submission): Promise<SubmitResult> =>
+interface OngoingSubmission
+{
+	completedTestCases: number
+	totalTestCases: number
+	result?: SubmitResult
+}
+
+const ongoingSubmissions: Map<number, OngoingSubmission> = new Map()
+let ongoingSubmissionsCounter = 0
+
+export const submit = async (submission: Submission, res: ServerResponse) =>
 {
 	console.log(`Submitting ${ submission.name }'s code for ${ submission.challenge }`)
 	console.log(`Language: ${ submission.lang }, code:\n${ submission.code }`)
@@ -39,23 +50,31 @@ export const submit = async (submission: Submission): Promise<SubmitResult> =>
 
 	const { challenge, lang, code } = submission
 	const testCaseFiles = readdirSync(`test-cases/${ challenge }`)
+		.filter(files => files.endsWith('.in'))
+
+	const id = ongoingSubmissionsCounter++
+
+	ongoingSubmissions.set(id, {
+		completedTestCases: 0,
+		totalTestCases: testCaseFiles.length
+	})
+
+	res.end(id.toString())
 
 	const results: TestCaseResult[] = []
 	let state: 'pass' | 'fail' = 'pass'
 
 	for (const testInputFile of testCaseFiles)
 	{
-		if (!testInputFile.endsWith('.in'))
-		{
-			continue
-		}
-
 		const testCaseName = testInputFile.slice(0, -3)
 		const testOutputFile = testInputFile.replace('.in', '.out')
 		const input = readFileSync(`test-cases/${ challenge }/${ testInputFile }`, 'utf8')
 		const output = readFileSync(`test-cases/${ challenge }/${ testOutputFile }`, 'utf8')
 
 		const result = await CompileBox.run({ lang, code, input })
+
+		const ongoingSubmission = ongoingSubmissions.get(id)
+		ongoingSubmission.completedTestCases++
 
 		if (result.err)
 		{
@@ -106,5 +125,22 @@ export const submit = async (submission: Submission): Promise<SubmitResult> =>
 
 	console.log('results', results)
 
-	return { state, results }
+	setTimeout(() => {
+		ongoingSubmissions.delete(id)
+	}, 60000 /* One minute */)
+
+	const ongoingSubmission = ongoingSubmissions.get(id)
+	ongoingSubmission.result = { state, results }
+}
+
+export const submissionStatus = (id: number) =>
+{
+	const ongoingSubmission = ongoingSubmissions.get(id)
+
+	if (!ongoingSubmission)
+	{
+		throw new Error(`Submission ${ id } does not exist`)
+	}
+
+	return ongoingSubmission
 }

@@ -91,6 +91,7 @@ Example output:
 A user can submit their code for a challenge using this endpoint.
 Their code will be tested, and if it passes all test cases,
 they will be placed on the leaderboard.
+Returns an identifier that can be used to check the status of their submission.
 
 Example input:
 
@@ -103,25 +104,48 @@ Example input:
 }
 ```
 
+Example ouput:
+
+```
+42
+```
+
+
+### GET `submission-status?id=<submission-id>`
+
+Returns the status of a submission.
+
+Example in-progress output:
+```json
+{
+	"completedTestCases": 4,
+	"totalTestCases": 15,
+}
+```
+
 Example pass output:
 
 ```json
 {
-	"state": "pass",
-	"results": [
-		{
-			"name": "one-plus-two",
-			"state": "pass",
-			"input": "1 2",
-			"output": "3\n"
-		},
-		{
-			"name": "three-plus-five",
-			"state": "pass",
-			"input": "3 5",
-			"output": "8\n"
-		}
-	]
+	"completedTestCases": 2,
+	"totalTestCases": 2,
+	"result": {
+		"state": "pass",
+		"results": [
+			{
+				"name": "one-plus-two",
+				"state": "pass",
+				"input": "1 2",
+				"output": "3\n"
+			},
+			{
+				"name": "three-plus-five",
+				"state": "pass",
+				"input": "3 5",
+				"output": "8\n"
+			}
+		]
+	}
 }
 ```
 
@@ -129,22 +153,26 @@ Example fail output:
 
 ```json
 {
-	"state": "fail",
-	"results": [
-		{
-			"name": "one-plus-two",
-			"state": "pass",
-			"input": "1 2",
-			"output": "3\n"
-		},
-		{
-			"name": "three-plus-five",
-			"state": "fail",
-			"input": "3 5",
-			"output": "2\n",
-			"expectedOutput": "8"
-		}
-	]
+	"completedTestCases": 2,
+	"totalTestCases": 2,
+	"result": {
+		"state": "fail",
+		"results": [
+			{
+				"name": "one-plus-two",
+				"state": "pass",
+				"input": "1 2",
+				"output": "3\n"
+			},
+			{
+				"name": "three-plus-five",
+				"state": "fail",
+				"input": "3 5",
+				"output": "2\n",
+				"expectedOutput": "8"
+			}
+		]
+	}
 }
 ```
 
@@ -152,16 +180,20 @@ Example error output:
 
 ```json
 {
-	"state": "fail",
-	"results": [
-		{
-			"name": "one-plus-two",
-			"state": "err",
-			"err": "...",
-			"input": "1 2",
-			"output": "<stderr>",
-			"expectedOutput": "8"
-		}
-	]
+	"completedTestCases": 1,
+	"totalTestCases": 1,
+	"result": {
+		"state": "fail",
+		"results": [
+			{
+				"name": "one-plus-two",
+				"state": "err",
+				"err": "...",
+				"input": "1 2",
+				"output": "<stderr>",
+				"expectedOutput": "8"
+			}
+		]
+	}
 }
 ```
