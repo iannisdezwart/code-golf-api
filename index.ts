@@ -8,6 +8,8 @@ const api = createAPI(PORT)
 
 api.post('/submit', async (req, res) =>
 {
+	res.setHeader('Access-Control-Allow-Origin', '*')
+
 	const body = await readJSONBody(req)
 
 	if (body == null)
@@ -40,6 +42,8 @@ api.post('/submit', async (req, res) =>
 
 api.get('/leaderboard', async (req, res) =>
 {
+	res.setHeader('Access-Control-Allow-Origin', '*')
+
 	const url = new URL(req.url, 'http://localhost')
 	const challenge = url.searchParams.get('challenge')
 
@@ -65,6 +69,8 @@ api.get('/leaderboard', async (req, res) =>
 
 api.get('/challenges', async (_req, res) =>
 {
+	res.setHeader('Access-Control-Allow-Origin', '*')
+
 	const challenges = getChallenges()
 	res.end(JSON.stringify(challenges))
 })
