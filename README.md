@@ -9,6 +9,11 @@ leaderboard.
 ## Installation
 
 Make sure you have NPM installed.
+Depends on [https://github.com/iannisdezwart/compile-box](compile-box).
+Open the `settings.json` file and edit `compileBoxApiUrl` to the url of your
+compile-box installation.
+
+Then run:
 
 ```sh
 npm i && npm start <port-number>

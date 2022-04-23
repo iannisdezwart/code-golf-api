@@ -1,7 +1,5 @@
 import { request } from 'http'
-import { Submission } from './submit'
-
-const API_URL = 'http://localhost:3094'
+import { settings } from './settings'
 
 export interface RunRequest
 {
@@ -21,7 +19,7 @@ export interface RunResult
 export const run = (runRequest: RunRequest) =>
 	new Promise<RunResult>(resolve =>
 {
-	const req = request(API_URL + '/run', { method: 'POST' }, res =>
+	const req = request(settings.compileBoxApiUrl + '/run', { method: 'POST' }, res =>
 	{
 		let body = ''
 
