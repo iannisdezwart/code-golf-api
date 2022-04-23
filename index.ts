@@ -1,6 +1,6 @@
 import { createAPI, readJSONBody } from '@iannisz/node-api-kit'
 import { getChallenges } from './challenges'
-import { getLeaderboard } from './leaderboard'
+import { getLeaderboard, LANGS } from './leaderboard'
 import { Submission, submit } from './submit'
 
 const PORT = +process.argv[2] || 3000
@@ -73,4 +73,10 @@ api.get('/challenges', async (_req, res) =>
 
 	const challenges = getChallenges()
 	res.end(JSON.stringify(challenges))
+})
+
+api.get('/languages', async (_req, res) =>
+{
+	res.setHeader('Access-Control-Allow-Origin', '*')
+	res.end(JSON.stringify(LANGS))
 })

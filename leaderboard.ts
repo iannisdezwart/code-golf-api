@@ -36,8 +36,8 @@ if (!existsSync('leaderboard.json'))
 
 const leaderboard = JSON.parse(readFileSync('leaderboard.json', 'utf8')) as Leaderboard
 
-const LANGS = [ 'js', 'py', 'c', 'cpp', 'java', 'bash', 'rust', 'php', 'ruby',
-	'go', 'scala', 'perl', 'golfscript', 'fish' ]
+export const LANGS = [ 'js', 'py', 'c', 'cpp', 'java', 'bash', 'rust', 'php',
+	'ruby', 'go', 'scala', 'perl', 'golfscript', 'fish' ]
 
 const writeLeaderboard = () =>
 {
