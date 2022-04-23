@@ -1,0 +1,7 @@
+node_modules/
+.jwtsecret
+*.js
+descriptions/*.html
+test-cases/*/
+leaderboard.json
+challenges.json
