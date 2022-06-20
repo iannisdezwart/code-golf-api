@@ -4,7 +4,7 @@ This is a simple code golf API that allows people to easily self-host
 code golf challenges. Users can view available challenges and submit code
 for them. If their code passes all test cases, they will be placed on the
 leaderboard.
-Can be used in combination of a front-end, like the one [I'm using](https://github.com/iannisdezwart/code-golf-front-end).
+Can be used in combination of a front-end, like the one [I created](https://github.com/iannisdezwart/code-golf-front-end).
 
 
 ## Installation
